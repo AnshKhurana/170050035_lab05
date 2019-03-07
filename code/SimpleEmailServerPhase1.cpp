@@ -1,6 +1,11 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <exception>
+#include <cstring>
+#include <string>
+#include <sstream>
+
 #define SERVERPORT 8000
 #define BACKLOG 10
 
@@ -8,30 +13,74 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
+
+    //Phase I
+
+    //Command line parsing
+
+        if (argc != 3)
+        {
+            cerr<<"Usage ./SimpleEmailServerPhase1 <portNum> <passwdfile>\n";
+            exit(1); 
+        }
+    int portNum;
+    istringstream ss(argv[1]);
+    if (!(ss >> portNum)) 
+    {
+        cerr <<"Invalid Port Number"<<'\n';
+        exit(2);
+    } 
+    else if (!ss.eof()) {
+        cerr <<"Invalid Port Number"<<'\n';
+        exit(2);
+    }
+
+
+    string passfilename = argv[2];
+
     //Declare
     int sockfd, newfd;
-    struct sockaddr_in my_addr;
-    struct sockaddr_in their_addr;
-    int sin_size;
+    struct sockaddr_in server_addr;
+    struct sockaddr_in client_addr;
+    unsigned int sin_size;
 
     //Initialize
     sockfd = socket(PF_INET, SOCK_STREAM, 0);
-    my_addr.sin_family = PF_INET;
-    my_addr.sin_port = htons(SERVERPORT);
-    my_addr.sin_addr.s_addr = INADDR_ANY;
-    memset(&(my_addr.sin_zero), '\0', 8);
-
-    cout<<"Initialization done"<<endl;
+    
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(portNum);
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    memset(&(server_addr.sin_zero), '\0', 8);
 
     //Set-up (Needs error correction)
 
-    bind(sockfd, (struct sock_addr *)&my_addr, sizeof(struct sockaddr));
+    int bind_error = 0;
 
-    listen(sockfd, BACKLOG);
-    sin_size = sizeof(struct sockaddr_in);
-    newfd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size);
+    bind_error = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
+
+    if (bind_error == -1)
+    {
+        cerr<<"Bind failed, invalid port.\n";
+        exit(2);
+    }
+
+    cout<<"BindDone:"<<portNum<<"\n"<<endl;
+    int listen_error;
+
+    listen_error = listen(sockfd, BACKLOG);
     
-    cout<<newfd<<endl;
+    if (listen_error == -1)
+    {
+        cerr<<"Listen failed.\n";
+        exit(4);
+    }
+
+    cout<<"ListenDone:"<<portNum<<"\n";
+
+    sin_size = sizeof(struct sockaddr_in);
+    newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size);
+    
+    cout<<"Client:ipaddr:port\n";
     
     return 0;
 }
