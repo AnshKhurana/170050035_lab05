@@ -52,6 +52,9 @@ int main(int argc, char const *argv[])
             exit(2);
         }
 
+        // Debug
+        // cout<<"Username: "<<username<<" Password: "<<passwd<<" ServerIP: "<<serverIPaddr<<" Server_port: "<<SERVER_PORT<<'\n';
+        
         int sockfd;
         struct sockaddr_in dest_addr; // will hold the destination addr
         sockfd = socket(PF_INET, SOCK_STREAM, 0);
