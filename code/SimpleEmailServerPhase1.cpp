@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <exception>
 #include <cstring>
 #include <string>
@@ -113,7 +115,47 @@ int main(int argc, char const *argv[])
     sin_size = sizeof(struct sockaddr_in);
     newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size);
     
-    cout<<"Client:ipaddr:port\n";
+    while(newfd == -1){
+   
+    newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size);
+     
+    }
+
+    char username[1024];
+    int bytes_recvd = recv(newfd, username, 1024, 0);
+    
+    char passwd[1024];
+    int bytes_recvd = recv(newfd, passwd, 1024, 0);
+  
+    char clientIPaddr[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(client_addr.sin_addr), clientIPaddr, INET_ADDRSTRLEN);
+
+    cout<<"Client:"<<clientIPaddr<<":"<<client_addr.sin_port<<"\n";
+
+    if (users.find(username) == users.end()) {
+        cout<<"Invalid User\n";
+        close(newfd);
+
+    }
+    else
+    {
+        if (strcmp(users[username], passwd) != 0) {
+            cout<<"Wrong Passwd";
+        }
+        else
+        {
+            cout<<"Welcome "<<username<<'\n';
+        }
+        
+        
+    }
+    
+    
+
+    // while(recv(newfd, s, 1024, 0)){
+        
+    // }
+        
     
     f.close();
     return 0;
