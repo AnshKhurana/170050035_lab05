@@ -130,8 +130,8 @@ int main(int argc, char const *argv[])
      
     }
 
-    char Log_Info[2048];
-    int bytes_recvd = recv(newfd, Log_Info, 2048, 0);
+    char Log_Info[1024];
+    int bytes_recvd = recv(newfd, Log_Info, 1024, 0);
     char clientIPaddr[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(client_addr.sin_addr), clientIPaddr, INET_ADDRSTRLEN);
     cout<<"Client:"<<clientIPaddr<<":"<<client_addr.sin_port<<"\n";
@@ -194,13 +194,13 @@ int main(int argc, char const *argv[])
             string welcome_msg = "Welcome " + username + "\n";
             cout<<welcome_msg;
             const char* wel_msg = welcome_msg.c_str();
-            int bytes_sent = send(newfd, wel_msg,strlen(wel_msg), 0); 
+            int bytes_sent = send(newfd, wel_msg,strlen(wel_msg)+1, 0); 
             if (bytes_sent == -1)
             {
                 cerr<<"Not sent.\n";
                 exit(2);
             }
-            else if (bytes_sent != welcome_msg.length()) 
+            else if (bytes_sent != welcome_msg.length()+1) 
             {
                 cerr<<"Data not sent completely.\n";
                 exit(2);
@@ -208,25 +208,14 @@ int main(int argc, char const *argv[])
         }    
     }
     
-    char next_msg[2048];
+    char next_msg[1024];
 
-    bytes_recvd = recv(newfd, next_msg, 2048, 0);
+    bytes_recvd = recv(newfd, next_msg, 1024, 0);
     if (strcmp(next_msg, "quit")== 0) {
             string goodbye_msg = "Bye "  + username + "\n";
             cout<<goodbye_msg;
-            const char* bye_msg = goodbye_msg.c_str();
-            int bytes_sent = send(newfd, bye_msg,strlen(bye_msg), 0); 
-            if (bytes_sent == -1)
-            {
-                cerr<<"Not sent.\n";
-                exit(2);
-            }
-            else if (bytes_sent != goodbye_msg.length()) 
-            {
-                cerr<<"Data not sent completely.\n";
-                exit(2);
-            }
-        
+            close(newfd);
+            exit(0);        
     }
     else
     {
