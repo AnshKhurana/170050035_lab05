@@ -42,7 +42,8 @@ int main(int argc, char const *argv[])
     int SERVER_PORT;
     istringstream ss(s.substr(pos+1, s.size()));
 
-    if (!(ss >> SERVER_PORT)) 
+    if (!(ss >> SERVER_PORT)) //Convert the string into a stream and 
+                              // then read the SERVERPORT from the stream 
     {
         cerr <<"Connection failed, invalid Port Number"<<'\n';
         exit(2);
@@ -75,54 +76,60 @@ int main(int argc, char const *argv[])
     int conn_success = connect(sockfd, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr));
     if (conn_success == -1)
     {
-        cerr<<"Connection failed.";
+        cerr<<"Connection failed.\n";
         exit(2);
     }
+    else
+    {
+        cout<<"ConnectDone:"<<serverIPaddr<<":"<<SERVER_PORT<<'\n';
+    }
+    
+    string login_msg = "User: " + username + " Pass: "+ passwd;
+    const char* msg  = login_msg.c_str();
+    int bytes_sent = send(sockfd, msg, login_msg.length(), 0); 
 
-    const char* msg  = username.c_str();
-    int bytes_sent = send(sockfd, msg, username.length(), 0); 
 
     if (bytes_sent == -1)
     {
         cerr<<"Not sent.\n";
         exit(2);
     }
-    else if (bytes_sent != username.length()) {
+    else if (bytes_sent != login_msg.length()) {
+        cerr<<"Data not sent completely.\n";
+        exit(2);
+    }
+    char welcome_msg[2048];
+    int bytes_recvd = recv(sockfd, welcome_msg, 2048, 0);
+    if (bytes_recvd == -1)
+    {
+        cout<<"Client didn't recv\n";
+        exit(2);
+    }
+    cout<<welcome_msg;
+    
+
+    const char* logout_msg  = "quit";
+    bytes_sent = send(sockfd, logout_msg,strlen(logout_msg), 0); 
+
+    if (bytes_sent == -1)
+    {
+        cerr<<"Not sent.\n";
+        exit(2);
+    }
+    else if (bytes_sent != strlen(logout_msg)) {
         cerr<<"Data not sent completely.\n";
         exit(2);
     }
     
-
-    const char* msgp  = passwd.c_str();
-    bytes_sent = send(sockfd, msg, passwd.length(), 0); 
-
-    if (bytes_sent == -1)
-    {
-        cerr<<"Not sent.\n";
-        exit(2);
-    }
-    else if (bytes_sent != passwd.length()) {
-        cerr<<"Data not sent completely.\n";
-        exit(2);
-    }
-
-    string x;
+    // char goodbye_msg[2048];
+    // bytes_recvd = recv(sockfd, goodbye_msg, 2048, 0);
     
-    while(x!= "quit"){
-        
-    const char* msgx  = x.c_str();
-    bytes_sent = send(sockfd, msg, x.length(), 0); 
-
-    if (bytes_sent == -1)
-    {
-        cerr<<"Not sent.\n";
-        exit(2);
-    }
-    else if (bytes_sent != x.length()) {
-        cerr<<"Data not sent completely.\n";
-        exit(2);
-    }
-    }
+    // if (bytes_recvd == -1)
+    // {
+    //     cout<<"Client didn't recv\n";
+    //     exit(2);
+    // }
+    // cout<<goodbye_msg;
     
 
     return 0;
