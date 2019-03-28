@@ -17,13 +17,13 @@ using namespace std;
 int main(int argc, char const *argv[])
 {
     
-    //Phase III
+    //Phase IV
 
     //Command line parsing
 
-    if (argc != 6)
+    if (argc != 7)
     {
-        cerr<<"Usage ./SimpleEmailClientPhase3 <serverIPAddr:port> <user-name> <passwd> <list-of-messages> <local-folder> \n";
+        cerr<<"Usage ./SimpleEmailClientPhase3  <serverIPAddr:port> <user-name> <passwd> <list-of-messages> <local-folder> <interval (in sec)> \n";
         exit(1); 
     }
     
