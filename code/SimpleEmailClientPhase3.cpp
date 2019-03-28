@@ -191,29 +191,67 @@ int main(int argc, char const *argv[])
         bytes_sent = send(sockfd, ret_msg,strlen(ret_msg)+1, 0); 
         char ret_msg_reply[1024];
         bytes_recvd = recv(sockfd, ret_msg_reply, 1024, 0);
+        cout<<"Bytes recvd while filename "<<bytes_recvd<<endl;
         if (bytes_recvd == -1 || bytes_recvd == 0)
         {
             exit(2);
         }
         else
         {
-                
+        char size_msg[32];
+        bytes_recvd = recv(sockfd, size_msg, 32, 0);
+        cout<<"Bytes recvd while size_msg "<<bytes_recvd<<endl;
+        
+        cout<<"Downloading file "<<ret_msg_reply<<" with size = "<<size_msg<<endl;
+
         fstream fw;
         string opfilename = local_folder + ret_msg_reply; 
         fw.open(opfilename, ios::out|ios::binary);
-        while(true){
+        int total_bytes = 0;
+        int size = stoi(size_msg);
+        cout<<"File size: "<<size<<endl;
+        int ctr;
+
+        for(size_t i = 0; i < size/1024; i++)
+        {
+            cout<<"Started receiving\n";
             char buffer[1024];
             bytes_recvd = recv(sockfd, buffer, 1024, 0);
-            cout<<bytes_recvd<<endl;
+            cout<<"pack "<<ctr<<" "<<bytes_recvd<<endl;
+            ctr++;
+            total_bytes = total_bytes + bytes_recvd;
             fw.write(buffer, bytes_recvd);
-            if(bytes_recvd < 1024)
-            {
-                fw.close();
-                break;
-            } 
+            
         }
-
+        if (size%1024 != 0) {
+            cout<<"Receiving remaining bytes\n";
+            char buffer[size%1024];
+            bytes_recvd = recv(sockfd, buffer, size%1024, 0);
+            cout<<"pack "<<ctr<<" "<<bytes_recvd<<endl;
+            ctr++;
+            total_bytes = total_bytes + bytes_recvd;
+            fw.write(buffer, bytes_recvd);
+        }
         
+        
+        // while(total_bytes < size){
+        //     cout<<"Starting receiving\n";
+        //     char buffer[1024];
+        //     bytes_recvd = recv(sockfd, buffer, 71, 0);
+        //     cout<<"pack"<<ctr<<" "<<bytes_recvd<<endl;
+        //     ctr++;
+        //     total_bytes = total_bytes + bytes_recvd;
+        //     fw.write(buffer, bytes_recvd);
+        //     // if(bytes_recvd < 1024)
+        //     // {
+        //     //     fw.close();
+        //     //     break;
+        //     // } 
+        // }
+        ctr = 0;
+        fw.close();
+        cout<<"File Downloaded. "<<"Total bytes received: "<<total_bytes<<"\n";
+
         }
     }
     const char* logout_msg  = "quit";

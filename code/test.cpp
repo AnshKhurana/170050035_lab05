@@ -1,11 +1,23 @@
 #include <iostream>
 #include <cstdint>
 #include <experimental/filesystem>
-namespace fs = std::experimental::filesystem;
+#include <string>
+
+using namespace std;
+
 int main()
 {
-    fs::path dir = fs::temp_directory_path();
-    fs::create_directories(dir / "abcdef/example");
-    std::uintmax_t n = fs::remove_all(dir / "abcdef");
-    std::cout << "Deleted " << n << " files or directories\n";
+ 
+    string s = "abc";
+    const char* a = s.c_str();
+    if (a[3] == '\0') {
+        cout<<"Working expectedly1\n";
+    }
+    if (s[3] == '\0')
+    {
+        cout<<"Working expectedly2";
+    }
+    
+
+
 }

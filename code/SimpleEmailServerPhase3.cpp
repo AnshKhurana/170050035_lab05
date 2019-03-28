@@ -12,8 +12,7 @@
 #include <stdio.h>
 #include <dirent.h>
 #include <sstream>
-#include <stdlib.h>
-#include <stdlib.h>
+// #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
 #include <netdb.h>
@@ -229,14 +228,18 @@ int main(int argc, char const *argv[])
     char next_msg[1024];
 
     bytes_recvd = recv(newfd, next_msg, 1024, 0);
-   while(bytes_recvd != -1){
-       string s(next_msg);
+   while(bytes_recvd != -1 || bytes_recvd != 0){
+
+       string s(next_msg); // Command
+
+        //Command: quit
         if (strcmp(next_msg, "quit")== 0) {
                 string goodbye_msg = "Bye "  + username + "\n";
                 cout<<goodbye_msg;
                 close(newfd);
                 break;   
         }
+        //Command: LIST
         else if (strcmp(next_msg, "LIST")== 0)
         {
             string userdir = userDBdir + username;
@@ -278,6 +281,7 @@ int main(int argc, char const *argv[])
             }
         
         }
+        // Command RETRV <ID>
         else if (s.find("RETRV ")==0) {
             int id_pos = s.find(" ");
             int id = stoi(s.substr(id_pos +1));
@@ -301,6 +305,10 @@ int main(int argc, char const *argv[])
             while (dpu = readdir (diru))
                 {
                     filename = string(dpu->d_name);
+                    if (filename == "." || filename == "..")
+                    {
+                        continue;
+                    }
                     string temp = filename.substr(0,filename.find("."));
                     istringstream fss(temp);
                     int file_id;
@@ -330,24 +338,50 @@ int main(int argc, char const *argv[])
                 break;
             }
             else{
-                cout<<"Here\n";
-            const char* file_name_msg = filename.c_str();
-            int bytes_sent = send(newfd, file_name_msg,strlen(file_name_msg)+1, 0); 
-            char buffer[1024];
+                cout<<"Starting send operation: \n";
+            const char* file_name_msg = (filename + '\0').c_str();
+            int bytes_sent = send(newfd, file_name_msg,1024, 0); 
+
             file.seekg(0, ios::end);
             streampos size = file.tellg();
-            cout<<size<<"\n";
+            cout<<"File size: "<<size<<"\n";
+            const char* file_size = (to_string(size) + '\0').c_str();
+            bytes_sent = send(newfd, file_size,32, 0); 
+
+            int ctr = 0;
             file.seekg (0, ios::beg);
-            for(size_t i = 0; i < size/1024; i++)
+            int remainder=1024;
+            int fs =size; 
+            for(size_t i = 0; i < fs/1024; i++)
             {
+                cout<<"In for loop\n";
+                char buffer[1024];
                 file.read(buffer, 1024);
                 bytes_sent = send(newfd, buffer, 1024, 0);
+                cout<<"pack"<<ctr<<" "<<"Bytes: "<<bytes_sent<<endl;
+                ctr++;
+                remainder = remainder - bytes_sent;
+                while(remainder > 0){
+                    /* code */
+                cout<<"Sending incomplete\n";
+                bytes_sent = send(newfd, buffer, remainder, 0);
+                remainder = remainder - bytes_sent;
+                    
+                }
+                
+
             }
-            if (size % 1024> 0)   {
-                file.read(buffer, size%1024);
-                bytes_sent = send(newfd, buffer, size%1024, 0);
+            if (fs % 1024> 0)   
+            {
+                cout<<"sending remaining bites\n";
+                char buffer[fs%1024];
+                
+                file.read(buffer, fs%1024);
+                bytes_sent = send(newfd, buffer, fs%1024, 0);
+                cout<<"pack"<<ctr<<" "<<"Bytes: "<<bytes_sent<<endl;
             }
             file.close();
+            ctr = 0;
             }
         }
         }
@@ -358,7 +392,7 @@ int main(int argc, char const *argv[])
             break;
 
         }
-         
+         cout<<"Blocked here";
         bytes_recvd = recv(newfd, next_msg, 1024, 0);  
     }
     close(newfd);
