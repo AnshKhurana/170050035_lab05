@@ -11,6 +11,8 @@
 #include <fstream>
 #include <vector>
 #include <sys/stat.h>
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono>
 
 using namespace std;
 
@@ -62,6 +64,7 @@ int main(int argc, char const *argv[])
 
     string list_of_messages =  argv[4];
     vector<int> msglist;
+    int dur = stoi(argv[6]);
 
    stringstream lss(list_of_messages);
 
@@ -187,6 +190,8 @@ int main(int argc, char const *argv[])
     // }
     for(size_t i = 0; i < msglist.size(); i++)
     {
+        this_thread::sleep_for (chrono::seconds(dur));
+        
         string ret = "RETRV " + to_string(msglist[i]);
         const char* ret_msg  = ret.c_str();
         bytes_sent = send(sockfd, ret_msg,strlen(ret_msg)+1, 0); 
