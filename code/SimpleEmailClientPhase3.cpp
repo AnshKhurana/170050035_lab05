@@ -158,32 +158,33 @@ int main(int argc, char const *argv[])
     else{
         cout<<welcome_msg;
     }
+    // cout<<"Welcome message number of bytes received."<<bytes_recvd<<"\n";
     
-    const char* list_msg  = "LIST";
-    bytes_sent = send(sockfd, list_msg,strlen(list_msg)+1, 0); 
+    // const char* list_msg  = "LIST";
+    // bytes_sent = send(sockfd, list_msg,strlen(list_msg)+1, 0); 
 
-    if (bytes_sent == -1)
-    {
-        cerr<<"Not sent.\n";
-        exit(2);
-    }
-    else if (bytes_sent != strlen(list_msg)+1) {
-        cerr<<"Data not sent completely.\n";
-        exit(2);
-    }
+    // if (bytes_sent == -1)
+    // {
+    //     cerr<<"Not sent.\n";
+    //     exit(2);
+    // }
+    // else if (bytes_sent != strlen(list_msg)+1) {
+    //     cerr<<"Data not sent completely.\n";
+    //     exit(2);
+    // }
     
-    char list_msg_reply[1024];
-    bytes_recvd = recv(sockfd, list_msg_reply, 1024, 0);
-    if (bytes_recvd == -1 || bytes_recvd == 0)
-    {
+    // char list_msg_reply[1024];
+    // bytes_recvd = recv(sockfd, list_msg_reply, 1024, 0);
+    // if (bytes_recvd == -1 || bytes_recvd == 0)
+    // {
        
-        exit(2);
-    }
-    else
-    {
-    cout<<list_msg_reply;
+    //     exit(2);
+    // }
+    // else
+    // {
+    // cout<<list_msg_reply;
 
-    }
+    // }
     for(size_t i = 0; i < msglist.size(); i++)
     {
         string ret = "RETRV " + to_string(msglist[i]);
@@ -191,7 +192,7 @@ int main(int argc, char const *argv[])
         bytes_sent = send(sockfd, ret_msg,strlen(ret_msg)+1, 0); 
         char ret_msg_reply[1024];
         bytes_recvd = recv(sockfd, ret_msg_reply, 1024, 0);
-        cout<<"Bytes recvd while filename "<<bytes_recvd<<endl;
+        // cout<<"Bytes recvd while filename "<<bytes_recvd<<endl;
         if (bytes_recvd == -1 || bytes_recvd == 0)
         {
             exit(2);
@@ -200,34 +201,34 @@ int main(int argc, char const *argv[])
         {
         char size_msg[32];
         bytes_recvd = recv(sockfd, size_msg, 32, 0);
-        cout<<"Bytes recvd while size_msg "<<bytes_recvd<<endl;
+        // cout<<"Bytes recvd while size_msg "<<bytes_recvd<<endl;
         
-        cout<<"Downloading file "<<ret_msg_reply<<" with size = "<<size_msg<<endl;
+        // cout<<"Downloading file "<<ret_msg_reply<<" with size = "<<size_msg<<endl;
 
         fstream fw;
         string opfilename = local_folder + ret_msg_reply; 
         fw.open(opfilename, ios::out|ios::binary);
         int total_bytes = 0;
         int size = stoi(size_msg);
-        cout<<"File size: "<<size<<endl;
+        // cout<<"File size: "<<size<<endl;
         int ctr;
 
         for(size_t i = 0; i < size/1024; i++)
         {
-            cout<<"Started receiving\n";
+            // cout<<"Started receiving\n";
             char buffer[1024];
             bytes_recvd = recv(sockfd, buffer, 1024, 0);
-            cout<<"pack "<<ctr<<" "<<bytes_recvd<<endl;
+            // cout<<"pack "<<ctr<<" "<<bytes_recvd<<endl;
             ctr++;
             total_bytes = total_bytes + bytes_recvd;
             fw.write(buffer, bytes_recvd);
             
         }
         if (size%1024 != 0) {
-            cout<<"Receiving remaining bytes\n";
+            // cout<<"Receiving remaining bytes\n";
             char buffer[size%1024];
             bytes_recvd = recv(sockfd, buffer, size%1024, 0);
-            cout<<"pack "<<ctr<<" "<<bytes_recvd<<endl;
+            // cout<<"pack "<<ctr<<" "<<bytes_recvd<<endl;
             ctr++;
             total_bytes = total_bytes + bytes_recvd;
             fw.write(buffer, bytes_recvd);
@@ -250,7 +251,7 @@ int main(int argc, char const *argv[])
         // }
         ctr = 0;
         fw.close();
-        cout<<"File Downloaded. "<<"Total bytes received: "<<total_bytes<<"\n";
+        cout<<"Downloaded Message "<<msglist[i]<<"\n";
 
         }
     }
