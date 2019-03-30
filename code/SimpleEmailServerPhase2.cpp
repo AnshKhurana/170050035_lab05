@@ -50,6 +50,11 @@ int main(int argc, char const *argv[])
     string passfilename = argv[2];
     string userDBdir =argv[3];
 
+    if (userDBdir[userDBdir.length()-1] != '/' ) {
+        userDBdir = userDBdir + '/';
+    }
+    
+
     DIR *dir; //the directory
     struct dirent *dp;
 
@@ -82,6 +87,14 @@ int main(int argc, char const *argv[])
     //Set-up (Needs error correction)
 
     int bind_error = 0;
+
+    int yes=1;
+//char yes=’1’; // Solaris people use this
+// lose the pesky "Address already in use" error message
+    if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1) {
+    perror("Bind failed.\n");
+    exit(2);
+    }
 
     // Binding to the specified port
     bind_error = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
@@ -119,7 +132,7 @@ int main(int argc, char const *argv[])
     
 
 
-    cout<<"BindDone:"<<portNum<<"\n";
+    cout<<"BindDone: "<<portNum<<"\n";
     int listen_error;
 
     // Listening to the socket with upto 10 users
@@ -131,7 +144,7 @@ int main(int argc, char const *argv[])
         exit(4);
     }
 
-    cout<<"ListenDone:"<<portNum<<"\n";
+    cout<<"ListenDone: "<<portNum<<"\n";
 
     sin_size = sizeof(struct sockaddr_in);
     while(true){
@@ -147,7 +160,7 @@ int main(int argc, char const *argv[])
     int bytes_recvd = recv(newfd, Log_Info, 1024, 0);
     char clientIPaddr[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &(client_addr.sin_addr), clientIPaddr, INET_ADDRSTRLEN);
-    cout<<"Client:"<<clientIPaddr<<":"<<client_addr.sin_port<<"\n";
+    cout<<"Client: "<<clientIPaddr<<":"<<client_addr.sin_port<<"\n";
     string username, passwd;
 
     // *Parse the string User: username Pass: passwd*
@@ -246,6 +259,7 @@ int main(int argc, char const *argv[])
         if((diru  = opendir(userdir.c_str())) == NULL)
         {
             cout<<username<<": Folder Read Fail\n";
+            // cout<<"Not able to open user directory"<<userdir<<endl;
             close(newfd);
             continue;
         }
@@ -312,6 +326,7 @@ int main(int argc, char const *argv[])
         if((diru  = opendir(userDBdir.c_str())) == NULL)
         {
             cout<<username<<": Folder Read Fail\n";
+            // cout<<"Not able to open database "<<userDBdir<<endl;
             close(newfd);
             continue;
         }

@@ -81,7 +81,7 @@ int main(int argc, char const *argv[])
     }
     else
     {
-        cout<<"ConnectDone:"<<serverIPaddr<<":"<<SERVER_PORT<<'\n';
+        cout<<"ConnectDone: "<<serverIPaddr<<":"<<SERVER_PORT<<'\n';
     }
     
     string login_msg = "User: " + username + " Pass: "+ passwd;

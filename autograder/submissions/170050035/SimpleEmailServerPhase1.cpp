@@ -77,6 +77,14 @@ int main(int argc, char const *argv[])
 
     int bind_error = 0;
 
+    int yes=1;
+//char yes=’1’; // Solaris people use this
+// lose the pesky "Address already in use" error message
+    if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1) {
+    perror("Bind failed.\n");
+    exit(2);
+    }
+
     // Binding to the specified port
     bind_error = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
 

@@ -90,6 +90,11 @@ int main(int argc, char const *argv[])
     }
     
     string local_folder = argv[5];
+
+    if (local_folder[local_folder.length()-1] != '/')
+    {
+        local_folder= local_folder + '/';
+    }
     struct stat buffer;
     if (stat (local_folder.c_str(), &buffer) == 0)
     {
@@ -191,7 +196,7 @@ int main(int argc, char const *argv[])
     for(size_t i = 0; i < msglist.size(); i++)
     {
         this_thread::sleep_for (chrono::seconds(dur));
-        
+            
         string ret = "RETRV " + to_string(msglist[i]);
         const char* ret_msg  = ret.c_str();
         bytes_sent = send(sockfd, ret_msg,strlen(ret_msg)+1, 0); 

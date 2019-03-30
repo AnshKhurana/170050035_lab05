@@ -50,6 +50,10 @@ int main(int argc, char const *argv[])
     string passfilename = argv[2];
     string userDBdir =argv[3];
 
+    if (userDBdir[userDBdir.length()-1] != '/' ) {
+        userDBdir = userDBdir + '/';
+    }
+
     DIR *dir; //the directory
     struct dirent *dp;
 
@@ -83,6 +87,14 @@ int main(int argc, char const *argv[])
 
     int bind_error = 0;
 
+
+    int yes=1;
+//char yes=’1’; // Solaris people use this
+// lose the pesky "Address already in use" error message
+    if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&yes,sizeof(int)) == -1) {
+    perror("Bind failed.\n");
+    exit(2);
+    }
     // Binding to the specified port
     bind_error = bind(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr));
 
@@ -330,7 +342,7 @@ int main(int argc, char const *argv[])
            fstream file;
             string opfilename  = userdir + "/" + filename; 
            file.open(opfilename, ios::in|ios::binary);
-            cout<<"Name of the file opened: "<<opfilename<<endl;
+            // cout<<"Name of the file opened: "<<opfilename<<endl;
             if (! file.good()) 
             {
                 cerr<<"Message Read Fail\n";
@@ -338,13 +350,12 @@ int main(int argc, char const *argv[])
                 break;
             }
             else{
-                cout<<"Starting send operation: \n";
             const char* file_name_msg = (filename + '\0').c_str();
             int bytes_sent = send(newfd, file_name_msg,1024, 0); 
 
             file.seekg(0, ios::end);
             streampos size = file.tellg();
-            cout<<"File size: "<<size<<"\n";
+            // cout<<"File size: "<<size<<"\n";
             const char* file_size = (to_string(size) + '\0').c_str();
             bytes_sent = send(newfd, file_size,32, 0); 
 
@@ -352,13 +363,14 @@ int main(int argc, char const *argv[])
             file.seekg (0, ios::beg);
             int remainder=1024;
             int fs =size; 
+           cout<<username<<": Transferring Message "<<id<<" \n";
             for(size_t i = 0; i < fs/1024; i++)
             {
-                cout<<"In for loop\n";
+                // cout<<"In for loop\n";
                 char buffer[1024];
                 file.read(buffer, 1024);
                 bytes_sent = send(newfd, buffer, 1024, 0);
-                cout<<"pack"<<ctr<<" "<<"Bytes: "<<bytes_sent<<endl;
+                // cout<<"pack"<<ctr<<" "<<"Bytes: "<<bytes_sent<<endl;
                 ctr++;
                 remainder = remainder - bytes_sent;
                 while(remainder > 0){
@@ -373,12 +385,12 @@ int main(int argc, char const *argv[])
             }
             if (fs % 1024> 0)   
             {
-                cout<<"sending remaining bites\n";
+                // cout<<"sending remaining bites\n";
                 char buffer[fs%1024];
                 
                 file.read(buffer, fs%1024);
                 bytes_sent = send(newfd, buffer, fs%1024, 0);
-                cout<<"pack"<<ctr<<" "<<"Bytes: "<<bytes_sent<<endl;
+                // cout<<"pack"<<ctr<<" "<<"Bytes: "<<bytes_sent<<endl;
             }
             file.close();
             ctr = 0;
@@ -392,7 +404,7 @@ int main(int argc, char const *argv[])
             break;
 
         }
-         cout<<"Blocked here";
+        //  cout<<"Blocked here";
         bytes_recvd = recv(newfd, next_msg, 1024, 0);  
     }
     close(newfd);
