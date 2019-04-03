@@ -1,0 +1,12 @@
+BindDone:2023
+ListenDone:2023
+Client:127.0.0.1:7368
+Welcome user1
+Client:127.0.0.1:7880
+Welcome user2
+user1: Transferring Message 4 
+user1: Transferring Message 2 
+user1: Transferring Message 1 
+user1: Transferring Message 3 
+Bye user1
+user2: Transferring Message 2 

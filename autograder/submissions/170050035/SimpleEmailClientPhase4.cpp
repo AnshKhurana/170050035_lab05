@@ -7,12 +7,13 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
-#include <sstream>
+#include <sstream>0
 #include <fstream>
 #include <vector>
 #include <sys/stat.h>
 #include <thread>         // std::this_thread::sleep_for
 #include <chrono>
+#include <regex>
 
 using namespace std;
 
@@ -63,8 +64,15 @@ int main(int argc, char const *argv[])
     // cout<<"Username: "<<username<<" Password: "<<passwd<<" ServerIP: "<<serverIPaddr<<" Server_port: "<<SERVER_PORT<<'\n';
 
     string list_of_messages =  argv[4];
+        regex rgx("[0-9]+(,[0-9]+)*");
+    if (! (regex_match(list_of_messages, rgx))) {
+        cerr<<"Not a list of numbers/ill-formatted.\n";
+        exit(3);
+    }
+    
     vector<int> msglist;
     int dur = stoi(argv[6]);
+    dur = dur*2;
 
    stringstream lss(list_of_messages);
 
@@ -83,6 +91,7 @@ int main(int argc, char const *argv[])
     }
 
     msglist.push_back(next);
+   
     size_t l = std::count(list_of_messages.begin(), list_of_messages.end(),',');
     if (msglist.size() != (l+1) || list_of_messages[list_of_messages.length()-1] == ',' ) {
         cerr<<"Not a list of numbers/ill-formatted.\n";
@@ -145,7 +154,7 @@ int main(int argc, char const *argv[])
     
     string login_msg = "User: " + username + " Pass: "+ passwd;
     const char* msg  = login_msg.c_str();
-    int bytes_sent = send(sockfd, msg, login_msg.length()+1, 0); 
+    int bytes_sent = send(sockfd, msg, 1024, 0); 
 
 
     if (bytes_sent == -1)
@@ -153,7 +162,7 @@ int main(int argc, char const *argv[])
         cerr<<"Not sent.\n";
         exit(2);
     }
-    else if (bytes_sent != login_msg.length()+1) {
+    else if (bytes_sent != 1024) {
         cerr<<"Data not sent completely.\n";
         exit(2);
     }
@@ -193,13 +202,13 @@ int main(int argc, char const *argv[])
     // cout<<list_msg_reply;
 
     // }
+        
     for(size_t i = 0; i < msglist.size(); i++)
     {
-        this_thread::sleep_for (chrono::seconds(dur));
-            
+        this_thread::sleep_for (chrono::seconds(dur));        
         string ret = "RETRV " + to_string(msglist[i]);
         const char* ret_msg  = ret.c_str();
-        bytes_sent = send(sockfd, ret_msg,strlen(ret_msg)+1, 0); 
+        bytes_sent = send(sockfd, ret_msg,1024, 0); 
         char ret_msg_reply[1024];
         bytes_recvd = recv(sockfd, ret_msg_reply, 1024, 0);
         // cout<<"Bytes recvd while filename "<<bytes_recvd<<endl;
@@ -266,14 +275,14 @@ int main(int argc, char const *argv[])
         }
     }
     const char* logout_msg  = "quit";
-    bytes_sent = send(sockfd, logout_msg,strlen(logout_msg)+1, 0); 
+    bytes_sent = send(sockfd, logout_msg, 1024, 0); 
 
     if (bytes_sent == -1)
     {
         cerr<<"Not sent.\n";
         exit(2);
     }
-    else if (bytes_sent != strlen(logout_msg)+1) {
+    else if (bytes_sent != 1024) {
         cerr<<"Data not sent completely.\n";
         exit(2);
     }

@@ -277,9 +277,9 @@ exit(1);
                         }
                     }    
                 }
-    
 
-             
+
+
             }
             else
             {
@@ -322,14 +322,14 @@ exit(1);
                         }
                         else
                         {
-                        int i =0;
+                        int j =0;
                         while (dpu = readdir (diru))
                             {
-                                i++;
+                                j++;
                             }
-                            i = i -2;
+                            j = j -2;
                         (void) closedir (diru);
-                        string list_msg = sock_user[i] + ": No of messages "+to_string(i)+'\n';
+                        string list_msg = sock_user[i] + ": No of messages "+to_string(j)+'\n';
                         cout<<list_msg;
                         const char* l_msg = list_msg.c_str();
                             int bytes_sent = send(i, l_msg,strlen(l_msg)+1, 0); 
@@ -402,7 +402,7 @@ exit(1);
                         if (! file.good()) 
                         {
                             cerr<<"Message Read Fail\n";
-                              close(i);
+                            close(i);
                             FD_CLR(i, &master);
                             continue;
                         }

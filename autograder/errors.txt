@@ -1,0 +1,12 @@
+cp: cannot stat 'test-sp.sh': No such file or directory
+Usage ./SimpleEmailClientPhase1 <serverIPAddr:port> <user-name> <passwd> 
+Connection failed.
+Usage ./SimpleEmailServerPhase1 <portNum> <passwdfile>
+Bind failed, invalid port.
+Password file not present or not readable
+Invalid directory
+Not a list of numbers/ill-formatted.
+md5sum: transfer_folder1/4.jpg: No such file or directory
+md5sum: transfer_folder1/5.jpg: No such file or directory
+md5sum: transfer_folder2/5.jpg: No such file or directory
+md5sum: transfer_folder2/3.txt: No such file or directory

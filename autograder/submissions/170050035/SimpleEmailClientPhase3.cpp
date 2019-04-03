@@ -11,6 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <sys/stat.h>
+#include <regex>
 
 using namespace std;
 
@@ -61,6 +62,12 @@ int main(int argc, char const *argv[])
     // cout<<"Username: "<<username<<" Password: "<<passwd<<" ServerIP: "<<serverIPaddr<<" Server_port: "<<SERVER_PORT<<'\n';
 
     string list_of_messages =  argv[4];
+    regex rgx("[0-9]+(,[0-9]+)*");
+    if (! (regex_match(list_of_messages, rgx))) {
+        cerr<<"Not a list of numbers/ill-formatted.\n";
+        exit(3);
+    }
+    
     vector<int> msglist;
 
    stringstream lss(list_of_messages);
@@ -255,6 +262,11 @@ int main(int argc, char const *argv[])
         // }
         ctr = 0;
         fw.close();
+        if (total_bytes != size)
+        {
+            cout<<"Incorrect file transfer\n";
+            exit(11);
+        }
         cout<<"Downloaded Message "<<msglist[i]<<"\n";
 
         }

@@ -1,0 +1,6 @@
+BindDone: 2016
+ListenDone: 2016
+Client:127.0.0.1:10978
+Welcome user1
+user1: Transferring Message 3 
+Bye user1

@@ -131,7 +131,7 @@ int main(int argc, char const *argv[])
     
 
 
-    cout<<"BindDone:"<<portNum<<"\n";
+    cout<<"BindDone: "<<portNum<<"\n";
     int listen_error;
 
     // Listening to the socket with upto 10 users
@@ -143,7 +143,7 @@ int main(int argc, char const *argv[])
         exit(4);
     }
 
-    cout<<"ListenDone:"<<portNum<<"\n";
+    cout<<"ListenDone: "<<portNum<<"\n";
 
     sin_size = sizeof(struct sockaddr_in);
     while(true){
@@ -345,19 +345,31 @@ int main(int argc, char const *argv[])
             // cout<<"Name of the file opened: "<<opfilename<<endl;
             if (! file.good()) 
             {
-                cerr<<"Message Read Fail\n";
+                cout<<"Message Read Fail\n";
                 close(newfd);
                 break;
             }
             else{
             const char* file_name_msg = (filename + '\0').c_str();
-            int bytes_sent = send(newfd, file_name_msg,1024, 0); 
+            int bytes_sent = send(newfd, file_name_msg, 1024, 0); 
+
+            if (bytes_sent < 1024) {
+                cerr<<"Sending error, filename not sent.\n";
+                exit(10);
+            }
+            
 
             file.seekg(0, ios::end);
             streampos size = file.tellg();
             // cout<<"File size: "<<size<<"\n";
             const char* file_size = (to_string(size) + '\0').c_str();
             bytes_sent = send(newfd, file_size,32, 0); 
+
+            if (bytes_sent < 32) {
+                cerr<<"Sending error, size not sent.\n";
+                exit(10);
+            }
+            
 
             int ctr = 0;
             file.seekg (0, ios::beg);

@@ -1,4 +1,0 @@
-ConnectDone:127.0.0.1:2030
-Welcome user1
-Downloaded Message 2
-Downloaded Message 3
