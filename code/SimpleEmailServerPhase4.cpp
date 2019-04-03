@@ -302,48 +302,48 @@ exit(1);
                             continue;   
                     }
                     //Command: LIST
-                    else if (strcmp(next_msg, "LIST")== 0)
-                    {
-                        string userdir = userDBdir + sock_user[i];
-                        // cout<<userdir<<endl;
-                        DIR *diru; //the directory
-                        struct dirent *dpu;
+                    // else if (strcmp(next_msg, "LIST")== 0)
+                    // {
+                    //     string userdir = userDBdir + sock_user[i];
+                    //     // cout<<userdir<<endl;
+                    //     DIR *diru; //the directory
+                    //     struct dirent *dpu;
 
-                        //open the directory
-                        if((diru  = opendir(userdir.c_str())) == NULL)
-                        {
-                            cout<<sock_user[i]<<": Folder Read Fail\n";
-                            close(i);
-                            FD_CLR(i, &master);
-                            continue;
-                        }
-                        else
-                        {
-                        int j =0;
-                        while (dpu = readdir (diru))
-                            {
-                                j++;
-                            }
-                            j = j -2;
-                        (void) closedir (diru);
-                        string list_msg = sock_user[i] + ": No of messages "+to_string(j)+'\n';
-                        cout<<list_msg;
-                        const char* l_msg = list_msg.c_str();
-                            int bytes_sent = send(i, l_msg,strlen(l_msg)+1, 0); 
-                            if (bytes_sent == -1)
-                            {
-                                cerr<<"Not sent.\n";
-                                exit(2);
-                            }
-                            else if (bytes_sent != list_msg.length()+1) 
-                            {
-                                cerr<<"Data not sent completely.\n";
-                                exit(2);
-                            }
+                    //     //open the directory
+                    //     if((diru  = opendir(userdir.c_str())) == NULL)
+                    //     {
+                    //         cout<<sock_user[i]<<": Folder Read Fail\n";
+                    //         close(i);
+                    //         FD_CLR(i, &master);
+                    //         continue;
+                    //     }
+                    //     else
+                    //     {
+                    //     int j =0;
+                    //     while (dpu = readdir (diru))
+                    //         {
+                    //             j++;
+                    //         }
+                    //         j = j -2;
+                    //     (void) closedir (diru);
+                    //     string list_msg = sock_user[i] + ": No of messages "+to_string(j)+'\n';
+                    //     cout<<list_msg;
+                    //     const char* l_msg = list_msg.c_str();
+                    //         int bytes_sent = send(i, l_msg,strlen(l_msg)+1, 0); 
+                    //         if (bytes_sent == -1)
+                    //         {
+                    //             cerr<<"Not sent.\n";
+                    //             exit(2);
+                    //         }
+                    //         else if (bytes_sent != list_msg.length()+1) 
+                    //         {
+                    //             cerr<<"Data not sent completely.\n";
+                    //             exit(2);
+                    //         }
                     
-                        }
+                    //     }
                     
-                    }
+                    // }
                     // Command RETRV <ID>
                     else if (s.find("RETRV ")==0) {
                         int id_pos = s.find(" ");

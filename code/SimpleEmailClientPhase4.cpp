@@ -203,10 +203,10 @@ int main(int argc, char const *argv[])
     // cout<<list_msg_reply;
 
     // }
-        
+         this_thread::sleep_for (chrono::seconds(dur));    
     for(size_t i = 0; i < msglist.size(); i++)
     {
-        this_thread::sleep_for (chrono::seconds(dur));        
+           
         string ret = "RETRV " + to_string(msglist[i]);
         const char* ret_msg  = ret.c_str();
         bytes_sent = send(sockfd, ret_msg,1024, 0); 
