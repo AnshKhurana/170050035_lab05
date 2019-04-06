@@ -1,3 +1,0 @@
-SimpleEmailClientPhase4.cpp:10:19: warning: extra tokens at end of #include directive
- #include <sstream>0
-                   ^

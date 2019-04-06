@@ -1,8 +1,8 @@
 BindDone:2023
 ListenDone:2023
-Client:127.0.0.1:7368
+Client:127.0.0.1:36566
 Welcome user1
-Client:127.0.0.1:7880
+Client:127.0.0.1:37078
 Welcome user2
 user1: Transferring Message 4 
 user1: Transferring Message 2 
@@ -10,3 +10,7 @@ user1: Transferring Message 1
 user1: Transferring Message 3 
 Bye user1
 user2: Transferring Message 2 
+user2: Transferring Message 4 
+user2: Transferring Message 5 
+user2: Transferring Message 3 
+Bye user2

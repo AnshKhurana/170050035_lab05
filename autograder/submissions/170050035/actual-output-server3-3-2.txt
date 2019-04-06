@@ -1,5 +1,6 @@
 BindDone: 2015
 ListenDone: 2015
-Client:127.0.0.1:24212
+Client:127.0.0.1:51362
 Welcome user1
 user1: Transferring Message 2 
+Bye user1

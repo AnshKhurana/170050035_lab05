@@ -16,13 +16,19 @@ do
 	    flags[1]=""
 	    flags[2]="-std=c++11"
 	    flags[3]="-g -std=c++11"
+	    flags[4]="-g -std=c++17"
 	    # {
 	    # 	echo "#include <stdio.h>"; echo "#include <errno.h>"; cat "$f.cpp"
 	    # } > "$f-mod.cpp"
-	    for i in 1 2 3
+	    for i in 1 2 3 4
 	    do
 		echo "Trying comping with g++ flags ${flags[$i]}..."
-		g++ ${flags[$i]} -o "$f" "$f.cpp"
+		if [ $i -eq 4 ]; then
+			g++ ${flags[$i]} -o "$f" "$f.cpp" -lstdc++fs
+		else
+			g++ ${flags[$i]} -o "$f" "$f.cpp"
+		fi
+		
 		if [ -x "$f" ]; then
 		    break
 		fi

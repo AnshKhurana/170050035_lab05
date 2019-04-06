@@ -7,7 +7,7 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
-#include <sstream>0
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <sys/stat.h>
@@ -72,7 +72,7 @@ int main(int argc, char const *argv[])
     
     vector<int> msglist;
     int dur = stoi(argv[6]);
-    dur = dur*2;
+
 
    stringstream lss(list_of_messages);
 
@@ -170,6 +170,7 @@ int main(int argc, char const *argv[])
     int bytes_recvd = recv(sockfd, welcome_msg, 1024, 0);
     if (bytes_recvd == -1 || bytes_recvd == 0)
     {
+        cerr<<"Welcome message killed\n";
         exit(2);
     }
     else{
@@ -202,10 +203,10 @@ int main(int argc, char const *argv[])
     // cout<<list_msg_reply;
 
     // }
-        
+         this_thread::sleep_for (chrono::seconds(dur));    
     for(size_t i = 0; i < msglist.size(); i++)
     {
-        this_thread::sleep_for (chrono::seconds(dur));        
+           
         string ret = "RETRV " + to_string(msglist[i]);
         const char* ret_msg  = ret.c_str();
         bytes_sent = send(sockfd, ret_msg,1024, 0); 

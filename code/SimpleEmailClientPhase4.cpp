@@ -229,7 +229,16 @@ int main(int argc, char const *argv[])
         string opfilename = local_folder + ret_msg_reply; 
         fw.open(opfilename, ios::out|ios::binary);
         int total_bytes = 0;
-        int size = stoi(size_msg);
+        int size;
+        try{
+         size = stoi(size_msg);
+        }
+        catch(...)
+        {
+            cout<<size_msg<<endl;
+            cout<<"Not a valid size message\n";
+        
+        }
         // cout<<"File size: "<<size<<endl;
         int ctr;
 
