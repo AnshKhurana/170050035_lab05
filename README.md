@@ -1,4 +1,4 @@
-# 170050035_lab05
+# Socket Programming Lab
 ### | CS 252 | Computer Networks | lab05 | Socket Programming |
 
 Implementation of a simplified version of PoP3 email protocol between a client and a server.
